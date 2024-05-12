@@ -19,10 +19,12 @@
   "homepage": "https://github.com/WebDevList/ExpressBoard#readme",
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
-    "express-ejs-layouts": "^2.5.1"
+    "express-ejs-layouts": "^2.5.1",
+    "mongoose": "^8.3.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

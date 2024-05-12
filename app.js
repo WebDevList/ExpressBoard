@@ -1,6 +1,10 @@
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const app = express();
+const connectDb = require("./config/dbConnect");
+
+connectDb();
+
 const port = 3000;
 
 app.set("views", "./views");
