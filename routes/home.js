@@ -1,10 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const { homePage } = require("../controllers/homeController");
+const { homePage, signInPage, signUpPage } = require("../controllers/homeController");
 const Post = require("../models/postModel");
 
 router.route("/")
     .get(homePage);
+
+router.route("/signIn")
+    .get(signInPage);
+
+router.route("/signUp")
+    .get(signUpPage);
 
 //@더미 데이터 생성
 // const numDummyData = 10;
