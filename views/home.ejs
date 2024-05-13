@@ -13,26 +13,15 @@
           </tr>
         </thead>
         <tbody>
+          <% posts.forEach((post) => { %>
           <tr>
-            <th scope="row">자유게시판</th>
-            <td><a href="#">제목1</a></td>
-            <td>글쓴이1</td>
-            <td>2024.05.13</td>
-            <td>5</td>
+            <th scope="row"><%= post.category %></th>
+            <td><a href="#"><%= post.title %></a></td>
+            <td><%= post.author %></td>
+            <td><%= post.updatedAt.toDateString() %></td>
+            <td><%= post.hits %></td>
           </tr>
-          <tr> <!-- db에서 가져와 반복 10개까지 -->
-            <th scope="row">공지사항</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">자유게시판</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>@twitter</td>
-            <td>@twitter</td>
-          </tr>
+          <% }); %>
         </tbody>
       </table>
 </div>
