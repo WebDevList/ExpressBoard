@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const PostSchema = new mongoose.Schema({
+    category : {
+        type : String,
+        required : true,
+        default : "자유", // 자유 or 공지
+    },
     title : {
         type : String,
         required : true,
