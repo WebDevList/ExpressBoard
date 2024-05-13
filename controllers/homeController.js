@@ -17,22 +17,26 @@ const homePage = asyncHandler(async(req, res) => {
         title : "Home",
     };
 
-    const posts = await Post.find({}).sort({ updatedAt : "desc" }).limit(10); // updatedAt : -1 도 같은 결과를 낸다.
-
+    let layout = nologinlayout;
     const token = req.cookies.token;
 
-    if (!token) {
-        return res.render("home", { locals, posts, layout : nologinlayout });
-    }
-
     try {
-        const decoded = jwt.verify(token, jwtSecret);
+        if (token) {
+            const decoded = jwt.verify(token, jwtSecret);
 
-        req.userId = decoded.id;
+            req.userId = decoded.id;
 
-        return res.render("home", { locals, posts, layout : loginlayout });
+            const user = await User.findById(req.userId);
+
+            res.locals.user = user;
+
+            layout = loginlayout;
+        }
+        const posts = await Post.find({}).sort({ updatedAt : "desc" }).limit(10); // updatedAt : -1 도 같은 결과를 낸다.
+
+        return res.render("home", { locals, posts, layout });
     } catch (error) {
-        return res.status(401).json({ message : "잘못된 접근입니다." });
+        return res.status(500).render("error", { error });
     }
 });
 
