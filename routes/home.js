@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { homePage, signInPage, signUpPage, register } = require("../controllers/homeController");
+const { homePage, signInPage, logIn, signUpPage, register } = require("../controllers/homeController");
 const Post = require("../models/postModel");
+const checkLogin = require("../middlewares/checkLogin");
 
 router.route("/")
     .get(homePage);
 
 router.route("/signIn")
-    .get(signInPage);
+    .get(signInPage)
+    .post(logIn);
 
 router.route("/signUp")
     .get(signUpPage)

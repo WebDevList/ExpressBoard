@@ -2,6 +2,9 @@ const asyncHandler = require("express-async-handler");
 const Post = require("../models/postModel");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+const jwtSecret = process.env.JWT_SECRET;
 
 const nologinlayout = "./nologinUsers/noLoginLayout";
 const loginlayout = "./loginUsers/loginLayout";
@@ -16,7 +19,21 @@ const homePage = asyncHandler(async(req, res) => {
 
     const posts = await Post.find({}).sort({ updatedAt : "desc" }).limit(10); // updatedAt : -1 도 같은 결과를 낸다.
 
-    res.render("home", { locals, posts, layout : nologinlayout });
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.render("home", { locals, posts, layout : nologinlayout });
+    }
+
+    try {
+        const decoded = jwt.verify(token, jwtSecret);
+
+        req.userId = decoded.id;
+
+        return res.render("home", { locals, posts, layout : loginlayout });
+    } catch (error) {
+        return res.status(401).json({ message : "잘못된 접근입니다." });
+    }
 });
 
 //@desc sign in page
@@ -29,6 +46,30 @@ const signInPage = (req, res) => {
     };
     res.render("signIn", {locals, layout: signLayout});
 };
+
+//@desc log in
+//@route POST /signIn
+const logIn = asyncHandler(async (req, res) => {
+    const { userId, password } = req.body;
+
+    const user = await User.findOne({ userId });
+
+    if (!user) {
+        return res.status(401).json({ message : "존재하지 않는 사용자입니다." });
+    }
+
+    const isMatched = await bcrypt.compare(password, user.password);
+
+    if (!isMatched) {
+        return res.status(401).json({ message : "비밀번호가 틀렸습니다." });
+    }
+
+    const token = jwt.sign({ id : user._id }, jwtSecret);
+
+    res.cookie("token", token, { httpOnly : true });
+
+    res.redirect("/");
+});
 
 //@desc sign up page
 //@route GET /signUp
@@ -73,4 +114,4 @@ const detailPage = asyncHandler(async(req, res) => { //user id 비교해서 작�
     
 });
 
-module.exports = { homePage, signInPage, signUpPage, register };
+module.exports = { homePage, signInPage, logIn, signUpPage, register };
