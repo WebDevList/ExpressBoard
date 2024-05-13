@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Post = require("../models/postModel");
+const User = require("../models/userModel");
+const bcrypt = require("bcrypt");
 
 const nologinlayout = "./nologinUsers/noLoginLayout";
 const loginlayout = "./loginUsers/loginLayout";
@@ -21,7 +23,7 @@ const homePage = asyncHandler(async(req, res) => {
 //@route GET /signIn
 const signInPage = (req, res) => {
     const locals = {
-        title : "SignIn",
+        title : "Sign In",
         url : "/signUp",
         redirect : "Sign Up",
     };
@@ -32,12 +34,38 @@ const signInPage = (req, res) => {
 //@route GET /signUp
 const signUpPage = (req, res) => {
     const locals = {
-        title : "SignUn",
+        title : "Sign Up",
         url : "/signIn",
         redirect : "Sign In",
     };
     res.render("signUp", {locals, layout: signLayout});
 };
+
+//@desc register user
+//@route POST /signUp
+const register = asyncHandler(async (req, res) => {
+    const {userId, password, password2} = req.body;
+
+    const existingUser = await User.findOne({ userId });
+    if (existingUser) {
+        return res.status(400).json({ message : "중복된 아이디입니다." });
+    }
+
+    if (password !== password2) {
+        return res.status(400).json({ message : "비밀번호가 일치하지 않습니다."});
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+        userId,
+        password : hashedPassword,
+    });
+
+    await newUser.save();
+
+    res.redirect("/");
+});
 
 //@desc view detail Post
 //@route GET /post/:id
@@ -45,4 +73,4 @@ const detailPage = asyncHandler(async(req, res) => { //user id 비교해서 작�
     
 });
 
-module.exports = { homePage, signInPage, signUpPage };
+module.exports = { homePage, signInPage, signUpPage, register };
