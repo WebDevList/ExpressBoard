@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { writePage } = require("../controllers/postController");
+const { writePage, registerPost } = require("../controllers/postController");
 
 router.route("/write")
-    .get(writePage);
+    .get(writePage)
+    .post(registerPost);
 
 module.exports = router;

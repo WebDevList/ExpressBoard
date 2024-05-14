@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 // require("dotenv").config();
 const jwtSecret = process.env.JWT_SECRET;
+const Post = require("../models/postModel");
 const User = require("../models/userModel");
 
 //@desc post page for write
@@ -26,11 +27,53 @@ const writePage = async(req, res) => {
 
         res.locals.user = user;
 
-        return res.render(res.render("post_write", { layout : "./loginUsers/loginLayout" }))
+        return res.render("post_write", { layout : "./loginUsers/loginLayout" });
     } catch(error) {
         return res.status(500).render("error", {error});
     }
 }
+
+//@desc register post
+//@route POST /post/write
+const registerPost = asyncHandler(async (req, res) => {
+    const { category, title, body } = req.body;
+
+    let selectedCategory = ""
+
+    if (category === "general") {
+        selectedCategory = "자유";
+    } else if (category === "notice") {
+        selectedCategory = "공지";
+    } else {
+        return res.status(400).json({ message : "잘못된 접근입니다." });
+    }
+
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.redirect("/signIn");
+    }
+    try {
+        const decoded = jwt.verify(token, jwtSecret);
+
+        req.userId = decoded.id;
+
+        const user = await User.findById(req.userId);
+
+        const newPost = await Post.create({
+            category : selectedCategory,
+            title,
+            author : user.userId,
+            body,
+        });
+
+        await newPost.save();
+        
+        res.redirect("/");
+    } catch (error) {
+        return res.status(500).render("error", {error});
+    }
+});
 
 //@desc view detail Post
 //@route GET /post/:id
@@ -38,4 +81,4 @@ const detailPage = asyncHandler(async(req, res) => { //user id 비교해서 작�
     res.render();
 });
 
-module.exports = { writePage };
+module.exports = { writePage, registerPost };
