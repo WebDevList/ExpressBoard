@@ -1,0 +1,23 @@
+
+
+<form id="write-form" action="/post/write" method="POST">
+    <div class="container">
+        <div class="dropdown">
+            <br>
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              카테고리
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" name = "notice" href="#">공지사항</a></li>
+              <li><a class="dropdown-item" name = "general" href="#">자유게시판</a></li>
+            </ul>
+        </div>
+        <div class="mb-3">
+            <br>
+            <input type="text" class="form-control" id="title" name="title" placeholder="제목">
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="내용을 작성해주세요"></textarea>
+        </div>
+    </div>
+</form>

@@ -17,6 +17,7 @@ app.use(expressLayouts);
 app.use(cookieParser());
 
 app.use("/", require("./routes/home"));
+app.use("/post", require("./routes/post"));
 
 app.listen(port, () => {
     console.log(`${port}번 포트에서 서버 실행중`);

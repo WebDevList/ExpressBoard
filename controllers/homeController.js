@@ -112,10 +112,4 @@ const register = asyncHandler(async (req, res) => {
     res.redirect("/");
 });
 
-//@desc view detail Post
-//@route GET /post/:id
-const detailPage = asyncHandler(async(req, res) => { //user id 비교해서 작성자와 일치하면 버튼 활성화 다르면 비활성화
-    
-});
-
 module.exports = { homePage, signInPage, logIn, signUpPage, register };
