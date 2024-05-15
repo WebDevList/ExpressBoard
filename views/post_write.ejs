@@ -1,30 +1,21 @@
 <form id="write-form" action="/post/write" method="POST">
     <div class="container">
         <br>
-        <div class="category-select-wrap">
+        <div class="category-select-wrap mb-3">
             <label for="category" class="form-label"><b>카테고리</b></label>
-            <select name="category" class="category-select" id="category">
+            <select name="category" class="form-select" id="category">
                 <option value="general">자유게시판</option>
                 <option value="notice">공지사항</option>
             </select>
         </div>
-        <!-- <div class="dropdown">
-            <br>
-            <button class="btn btn-secondary dropdown-toggle" type="button" name="category" data-bs-toggle="dropdown" aria-expanded="false">
-              카테고리
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" name = "notice" href="#">공지사항</a></li>
-              <li><a class="dropdown-item" name = "general" href="#">자유게시판</a></li>
-            </ul>
-        </div> -->
         <div class="mb-3">
-            <br>
             <input type="text" class="form-control" id="title" name="title" placeholder="제목">
         </div>
         <div class="mb-3">
             <textarea class="form-control" id="body" name="body" rows="5" placeholder="내용을 작성해주세요"></textarea>
         </div>
-        <input class="btn btn-primary" type="submit" value="등록하기">
+        <div class="d-grid">
+            <input class="btn btn-primary" type="submit" value="등록하기">
+        </div>
     </div>
 </form>

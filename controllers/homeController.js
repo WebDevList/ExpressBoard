@@ -112,4 +112,11 @@ const register = asyncHandler(async (req, res) => {
     res.redirect("/");
 });
 
-module.exports = { homePage, signInPage, logIn, signUpPage, register };
+//@desc logout
+//@route GET /logout
+const logout = (req, res) => {
+    res.clearCookie("token");
+    res.redirect('/');
+};
+
+module.exports = { homePage, signInPage, logIn, signUpPage, register, logout };
