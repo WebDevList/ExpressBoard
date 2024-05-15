@@ -119,4 +119,56 @@ const logout = (req, res) => {
     res.redirect('/');
 };
 
-module.exports = { homePage, signInPage, logIn, signUpPage, register, logout };
+//@desc general page
+//@route GET /general
+const generalPage = asyncHandler(async(req, res) => {
+    const posts = await Post.find({ category : "자유" }).sort({ updatedAt: "desc"});
+
+    const token = req.cookies.token;
+
+    if(!token) {
+        return res.render("./category/general", { posts, layout: nologinlayout });
+    }
+
+    try{
+        const decoded = jwt.verify(token, jwtSecret);
+
+        req.userId = decoded.id;
+
+        const user = await User.findById(req.userId);
+
+        res.locals.user = user;
+
+        return res.render("./category/general", { posts, layout: loginlayout });
+    } catch(error) {
+        return res.status(500).render("error", {error});
+    }
+});
+
+//@desc notice page
+//@route GET /general
+const noticePage = asyncHandler(async(req, res) => {
+    const posts = await Post.find({ category : "공지" }).sort({ updatedAt: "desc"});
+
+    const token = req.cookies.token;
+
+    if(!token) {
+        return res.render("./category/notice", { posts, layout: nologinlayout });
+    }
+
+    try{
+        const decoded = jwt.verify(token, jwtSecret);
+
+        req.userId = decoded.id;
+
+        const user = await User.findById(req.userId);
+
+        res.locals.user = user;
+
+        return res.render("./category/notice", { posts, layout: loginlayout });
+    } catch(error) {
+        return res.status(500).render("error", { error });
+    }
+});
+
+module.exports = { homePage, signInPage, logIn, signUpPage, register, logout, generalPage, noticePage};

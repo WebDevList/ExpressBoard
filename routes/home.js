@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { homePage, signInPage, logIn, signUpPage, register, logout } = require("../controllers/homeController");
-const Post = require("../models/postModel");
-const checkLogin = require("../middlewares/checkLogin");
+const { homePage, signInPage, logIn, signUpPage, register, logout, generalPage, noticePage } = require("../controllers/homeController");
+// const Post = require("../models/postModel");
+// const checkLogin = require("../middlewares/checkLogin");
 
 router.route("/")
     .get(homePage);
@@ -17,6 +17,12 @@ router.route("/signUp")
 
 router.route("/logout")
     .get(logout);
+
+router.route("/general")
+    .get(generalPage);
+
+router.route("/notice")
+    .get(noticePage);
 
 //@더미 데이터 생성
 // const numDummyData = 10;
