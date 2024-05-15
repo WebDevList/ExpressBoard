@@ -1,35 +1,39 @@
 <div class="container d-flex flex-column align-items-center mt-5">
     <div class="w-75">
-        <div class="container text-start mt-3">
-            <div class="row post-meta">
-                <div class="col-md-8 d-flex align-items-center justify-content-center" style="height: 100px;">
-                    <h5><i class="fas fa-heading icon"></i>제목: <%= post.title %></h5>
+        <form action="/post/edit/<%= post._id %>?_method=DELETE" id="delete" method="POST">
+            <div class="container text-start mt-3">
+                <div class="row post-meta">
+                    <div class="col-md-8 d-flex align-items-center justify-content-center" style="height: 100px;">
+                        <h5><i class="fas fa-heading icon"></i>제목: <%= post.title %></h5>
+                    </div>
+                    <div class="col-6 col-md-4 d-flex flex-column align-items-center justify-content-center" style="height: 100px;">
+                        <div><i class="fas fa-user icon"></i>작성자: <%= post.author %></div>
+                        <div><i class="fas fa-eye icon"></i>조회수: <%= post.hits %></div>
+                        <div><i class="fas fa-calendar-alt icon"></i>작성일: <%= formattedDate %></div>
+                    </div>
                 </div>
-                <div class="col-6 col-md-4 d-flex flex-column align-items-center justify-content-center" style="height: 100px;">
-                    <div><i class="fas fa-user icon"></i>작성자: <%= post.author %></div>
-                    <div><i class="fas fa-eye icon"></i>조회수: <%= post.hits %></div>
-                    <div><i class="fas fa-calendar-alt icon"></i>작성일: <%= formattedDate %></div>
+                <br>
+                <div class="row post-body">
+                    <div class="col-12">
+                        <p><%= post.body %></p>
+                    </div>
                 </div>
             </div>
-            <br>
-            <div class="row post-body">
-                <div class="col-12">
-                    <p><%= post.body %></p>
-                </div>
-            </div>
-        </div>
     </div>
     <!--편집하기 삭제하기 버튼-->
-    <div class="container text-center mt-3">
-        <div class="row">
-            <div class="col">
-                <a class="btn btn-primary" href="/post/edit/<%= post._id %>" role="button">수정하기</a>
-            </div>
-            <div class="col">
-                <a class="btn btn-primary" href="#" role="button">삭제하기</a>
+        <div class="container text-center mt-3">
+            <div class="row">
+                <div class="col">
+                    <a class="btn btn-primary" href="/post/edit/<%= post._id %>" role="button">수정하기</a>
+                </div>
+                <div class="col">
+                    
+                    <input class="btn btn-primary" type="submit" value="삭제하기">
+
+                </div>
             </div>
         </div>
-    </div>
+        </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

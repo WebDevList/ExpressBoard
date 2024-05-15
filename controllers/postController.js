@@ -126,7 +126,7 @@ const editPage = asyncHandler(async (req, res) => {
 
 //@desc edit post
 //@route PUT /post/edit/:id
-const edit = asyncHandler(async (req, res) => {
+const editPost = asyncHandler(async (req, res) => {
     const { title, body } = req.body;
 
     const postId = req.params.id;
@@ -136,4 +136,14 @@ const edit = asyncHandler(async (req, res) => {
     res.redirect("/");
 });
 
-module.exports = { writePage, registerPost, detailPage, editPage, edit };
+//@desc delete post
+//@route DELETE /post/delete/:id
+const deletePost = asyncHandler(async (req, res) => {
+    const postId = req.params.id;
+
+    await Post.findByIdAndDelete(postId);
+
+    res.redirect("/");
+});
+
+module.exports = { writePage, registerPost, detailPage, editPage, editPost, deletePost};

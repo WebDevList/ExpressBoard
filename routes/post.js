@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { writePage, registerPost, detailPage, editPage, edit } = require("../controllers/postController");
+const { writePage, registerPost, detailPage, editPage, editPost, deletePost } = require("../controllers/postController");
 const checkLogin = require("../middlewares/checkLogin");
 
 
@@ -13,6 +13,7 @@ router.route("/:id")
 
 router.route("/edit/:id")
     .get(editPage)
-    .put(checkLogin, edit);
+    .put(checkLogin, editPost)
+    .delete(checkLogin, deletePost);
 
 module.exports = router;
