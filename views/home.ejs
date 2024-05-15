@@ -16,7 +16,7 @@
           <% posts.forEach((post) => { %>
           <tr>
             <th scope="row"><%= post.category %></th>
-            <td><a href="#"><%= post.title %></a></td>
+            <td><a href="/post/<%= post._id %>"><%= post.title %></a></td>
             <td><%= post.author %></td>
             <td><%= post.updatedAt.toDateString() %></td>
             <td><%= post.hits %></td>
