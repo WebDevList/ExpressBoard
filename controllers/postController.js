@@ -108,4 +108,32 @@ const detailPage = asyncHandler(async(req, res) => { //user id 비교해서 작�
     }
 });
 
-module.exports = { writePage, registerPost, detailPage };
+//@desc edit post page
+//@route GET /post/edit/:id
+const editPage = asyncHandler(async (req, res) => {
+    const postId = req.params.id;
+
+    const post = await Post.findById(postId);
+
+    const user = {
+        userId : post.author
+    };
+
+    res.locals.user = user;
+
+    res.render("edit", {post, layout: loginLayout});
+});
+
+//@desc edit post
+//@route PUT /post/edit/:id
+const edit = asyncHandler(async (req, res) => {
+    const { title, body } = req.body;
+
+    const postId = req.params.id;
+
+    await Post.findByIdAndUpdate(postId, {title, body, updatedAt: Date.now()}, {new : true});
+
+    res.redirect("/");
+});
+
+module.exports = { writePage, registerPost, detailPage, editPage, edit };

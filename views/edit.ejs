@@ -1,0 +1,33 @@
+<div class="container d-flex flex-column align-items-center mt-5">
+    <div class="w-75">
+        <h3>수정하기</h3>
+        <form action="/post/edit/<%= post._id %>?_method=PUT", id="edit", method="POST">
+            <div class="container text-start mt-3">
+                <div class="row post-meta">
+                    <div class="col-md-8 d-flex align-items-start justify-content-center" style="height: auto;">
+                        <!-- <label for="title" class="form-label"><i class="fas fa-heading icon"></i></label> -->
+                        <input type="text" class="form-control" id="title" name="title" value="<%= post.title %>">
+                    </div>
+                </div>
+                <br>
+                <div class="row post-body">
+                    <div class="col-12">
+                        <textarea class="form-control" rows="10" id="body" name="body"><%= post.body %></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="container text-center mt-3">
+                <div class="row">
+                    <div class="col">
+                        <input class="btn btn-primary" type="submit" value="수정하기">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
