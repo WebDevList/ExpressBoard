@@ -84,7 +84,7 @@ const registerPost = asyncHandler(async (req, res) => {
 const detailPage = asyncHandler(async(req, res) => { //user id 비교해서 작성자와 일치하면 버튼 활성화 다르면 비활성화
     const postId = req.params.id;
 
-    const post = await Post.findById(postId);
+    const post = await Post.findByIdAndUpdate(postId, { $inc : { hits : 1 }}, { new : true });
 
     const formattedDate = format(new Date(post.createdAt), "yyyy MMM dd");
     
