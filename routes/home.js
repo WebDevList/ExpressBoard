@@ -24,13 +24,13 @@ router.route("/general")
 router.route("/notice")
     .get(noticePage);
 
-//@더미 데이터 생성
-// const numDummyData = 10;
+// @더미 데이터 생성
+// const numDummyData = 100;
 
 // for(let i = 0; i < numDummyData; i++) {
 //     const newPost = new Post({
-//         title : `제목${i}`,
-//         author : `작성자${i}`,
+//         title : `new 제목${i}`,
+//         author : `admin`,
 //         body : `내용 ${i} - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`
 //     });
 

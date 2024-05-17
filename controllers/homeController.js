@@ -120,17 +120,41 @@ const logout = (req, res) => {
 };
 
 //@desc general page
-//@route GET /general
-const generalPage = asyncHandler(async(req, res) => {
-    const posts = await Post.find({ category : "자유" }).sort({ updatedAt: "desc"});
+//@route GET /general?currentPage=:currentPage
+const generalPage = asyncHandler(async (req, res) => {
+    const currentPage = parseInt(req.query.currentPage) || 1;
+    const postsPerPage = 10;
+    const pagesPerGroup = 10;
+    const skip = (currentPage - 1) * postsPerPage;
+
+    const posts = await Post.find({ category: "자유" })
+        .skip(skip)
+        .limit(postsPerPage)
+        .sort({ updatedAt: "desc" });
+
+    const totalPosts = await Post.countDocuments({ category: "자유" });
+    const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+    const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+    const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+    const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+    const paging = {
+        currentPage,
+        totalPages,
+        startPage,
+        endPage,
+        currentGroup,
+        pagesPerGroup
+    };
 
     const token = req.cookies.token;
 
-    if(!token) {
-        return res.render("./category/general", { posts, layout: nologinlayout });
+    if (!token) {
+        return res.render("./category/general", { posts, paging, layout: nologinlayout });
     }
 
-    try{
+    try {
         const decoded = jwt.verify(token, jwtSecret);
 
         req.userId = decoded.id;
@@ -139,21 +163,45 @@ const generalPage = asyncHandler(async(req, res) => {
 
         res.locals.user = user;
 
-        return res.render("./category/general", { posts, layout: loginlayout });
-    } catch(error) {
-        return res.status(500).render("error", {error});
+        return res.render("./category/general", { posts, paging, layout: loginlayout });
+    } catch (error) {
+        return res.status(500).render("error", { error });
     }
 });
 
-//@desc notice page
-//@route GET /general
-const noticePage = asyncHandler(async(req, res) => {
-    const posts = await Post.find({ category : "공지" }).sort({ updatedAt: "desc"});
 
+//@desc notice page
+//@route GET /notice
+const noticePage = asyncHandler(async(req, res) => {
+    const currentPage = parseInt(req.query.currentPage) || 1;
+    const postsPerPage = 10;
+    const pagesPerGroup = 10;
+    const skip = (currentPage - 1) * postsPerPage;
+
+    const posts = await Post.find({ category : "공지" })
+        .skip(skip)
+        .limit(postsPerPage)
+        .sort({ updatedAt: "desc"});
+
+    const totalPosts = await Post.countDocuments({ category : "공지" });
+    const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+    const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+    const startPage = (currentGroup - 1) * pagesPerGroup + 1;
+    const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+
+    const paging = {
+        currentPage,
+        totalPages,
+        startPage,
+        endPage,
+        currentGroup,
+        pagesPerGroup
+    };
     const token = req.cookies.token;
 
     if(!token) {
-        return res.render("./category/notice", { posts, layout: nologinlayout });
+        return res.render("./category/notice", { posts, paging, layout: nologinlayout });
     }
 
     try{
@@ -165,7 +213,7 @@ const noticePage = asyncHandler(async(req, res) => {
 
         res.locals.user = user;
 
-        return res.render("./category/notice", { posts, layout: loginlayout });
+        return res.render("./category/notice", { posts, paging, layout: loginlayout });
     } catch(error) {
         return res.status(500).render("error", { error });
     }

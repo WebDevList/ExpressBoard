@@ -1,30 +1,61 @@
 <div class="container">
-    <br>
-    <h3>공지사항</h3>
-    <br>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">카테고리</th>
-          <th scope="col">제목</th>
-          <th scope="col">글쓴이</th>
-          <th scope="col">작성일</th>
-          <th scope="col">조회수</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% posts.forEach((post) => { %>
-        <tr>
-          <th scope="row"><%= post.category %></th>
-          <td><a href="/post/<%= post._id %>"><%= post.title %></a></td>
-          <td><%= post.author %></td>
-          <td><%= post.updatedAt.toDateString() %></td>
-          <td><%= post.hits %></td>
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
-    <div class="d-flex justify-content-end mb-3">
-      <a class="btn btn-primary" href="/post/write" role="button">글쓰기</a>
-    </div>
+  <br>
+  <h3>공지 사항</h3>
+  <br>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">카테고리</th>
+        <th scope="col">제목</th>
+        <th scope="col">글쓴이</th>
+        <th scope="col">작성일</th>
+        <th scope="col">조회수</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% posts.forEach(post => { %>
+      <tr>
+        <th scope="row"><%= post.category %></th>
+        <td><a href="/post/<%= post._id %>"><%= post.title %></a></td>
+        <td><%= post.author %></td>
+        <td><%= post.updatedAt.toDateString() %></td>
+        <td><%= post.hits %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-end mb-3">
+    <a class="btn btn-primary" href="/post/write" role="button">글쓰기</a>
+  </div>
+  <div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <% if (paging.currentPage > 1) { %>
+        <li class="page-item">
+          <a class="page-link" href="/notice?currentPage=<%= paging.currentPage - 1 %>">Previous</a>
+        </li>
+        <% } %>
+        <% if (paging.startPage > 1) { %>
+        <li class="page-item">
+          <a class="page-link" href="/notice?currentPage=<%= paging.startPage - 1 %>">&laquo;</a>
+        </li>
+        <% } %>
+        <% for (var i = paging.startPage; i <= paging.endPage; i++) { %>
+        <li class="page-item <%= i === paging.currentPage ? 'active' : '' %>">
+          <a class="page-link" href="/notice?currentPage=<%= i %>"><%= i %></a>
+        </li>
+        <% } %>
+        <% if (paging.endPage < paging.totalPages) { %>
+        <li class="page-item">
+          <a class="page-link" href="/notice?currentPage=<%= paging.endPage + 1 %>">&raquo;</a>
+        </li>
+        <% } %>
+        <% if (paging.currentPage < paging.totalPages) { %>
+        <li class="page-item">
+          <a class="page-link" href="/notice?currentPage=<%= paging.currentPage + 1 %>">Next</a>
+        </li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
 </div>
