@@ -21,18 +21,18 @@
             </div>
     </div>
     <!--편집하기 삭제하기 버튼-->
+    <% if (post.author === user.userId) { %>
         <div class="container text-center mt-3">
             <div class="row">
                 <div class="col">
-                    <a class="btn btn-primary" href="/post/edit/<%= post._id %>" role="button">수정하기</a>
+                    <a class="btn btn-primary" href="/post/edit/<%= post._id %>" role="button">편집하기</a>
                 </div>
                 <div class="col">
-                    
                     <input class="btn btn-primary" type="submit" value="삭제하기">
-
                 </div>
             </div>
         </div>
+    <% } %>
         </form>
 </div>
 
