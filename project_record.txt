@@ -1,0 +1,179 @@
+1일차 5.12
+
+프로젝트 생성
+서버 기반 구현
+템플릿 파일 home 부분 구현
+db 연결 및 모델 생성
+db에 더미 데이터 저장
+
+2일차 5.13
+
+카테고리 필드를 스키마에 추가해 기존 데이터들에도 적용시킴
+저장된 데이터들 템플릿 파일로 불러와 렌더링
+로그인 회원가입 템플릿 파일 생성 및 라우팅
+유저 모델 생성
+회원가입 기능 구현
+로그인 기능 구현
+로그인 체크 미들웨어 구현
+컨트롤러의 홈화면을 가져오는 함수를 로그인 유무에 따라 다른 레이아웃을 출력하도록 구현
+로그인한 화면 레이아웃에 유저명을 띄움
+홈화면 렌더링 코드 리펙토링
+
+Q) 
+1. DB documents에 새로운 필드를 추가시 이전에 저장된 데이터들에도 적용시키는 방법.
+A)
+기존의 스키마에 새로운 필드를 추가하고, 모든 기존 데이터를 업데이트하여 새로운 필드에 해당하는 값을 지정한다.
+MongoDB 쿼리를 사용할 수 있다. 일반적으로 updateMany() 메서드를 사용해 전체 컬렉션을 업데이트 하는 것이 효율적이다.
+
+Q)
+2. token 유효성 검사 미들웨어에서 req.userId = decoded.id; 를 하는 이유
+A)
+토큰에서 추출한 id 를 요청객체의 userId 프로퍼티에 저장함으로 이후 후속 라우터나 미들웨어에서 사용자 ID로의 접근을 쉽게 할 수 있게 된다.
+
+Q)
+3. 토큰 유효성 검사 미들웨어는 언제 사용하는가?
+A)
+로그인한 사용자만이 접근할 수 있는 컨텐츠 ex) 글쓰기, 편집, 삭제 등을 할때 라우트 코드에 붙여 사용한다.
+로그인 하지 않은 사용자도 함께 사용하는 컨텐츠의 경우 컨트롤러 함수 내에 토큰의 유효성을 검사해 if(!token) 의 방식으로 나누어 렌더링한다.
+
+Q)
+4. 템플릿 파일에 가져오는 변수 값을 렌더링 옵션에 넣지 않고 가져오는 경우도 있는가?
+A)
+res.locals.{템플릿 변수에서 사용할 변수명} = {변수명}; 에 담아 템플릿 파일에서 <%= {템플릿 변수에서 사용할 변수명}.{프로퍼티} %> 값으로 가져와 사용할 수 있다.
+
+3일차 5.14
+
+글쓰기 화면 구현
+작성한 글 DB에 저장하는 기능 구현
+
+Q)
+1. 템플릿 파일에서 부트스트랩 드롭다운 컴포넌트를 이용해 카테고리를 구분지으려 했다.
+해당하는 카테고리 드롭다운을 선택했을때 '카테고리' 구역이 선택된 것으로 바꾸고 싶은데 어떻게 해야하는가?
+A)
+부트스트랩 컴포턴트를 고치지 못해 html의 select 태그를 사용해 option 태그로 드롭다운을 구현했다.
+option 태그는 value 값은 유효하지만 name 속성은 쓰이지 않으며 id 속성은 javascript나 css에서 해당 옵션을 선택하거나 스타일링할떄 쓰므로 기능에 영향이 없어 추가하지 않았다.
+컨트롤러 파일에서 req.body.category로 불러올 수 있다.
+
+Q)
+같은 파일 내에 같은 페이지 url 을 공유하는 두개의 컨트롤러 함수가 각각 GET 요청과 POST 요청을 하기 위해 만들어졌다.
+GET 요청에 사용할 함수 내에 token에서 뽑아낸 payload의 id 값을 req.userId 에 저장을 했는데 이를 POST 요청을 위해 만든 함수에서 req.userId 값으로 불러 쓸수 있는가?
+A)
+Chat gpt에서는 가능하다 하지만 실제로 해본 결과 해당 값을 사용한 결과 null값이 저장되었다.
+결과 token 해석하는 코드를 한번더 작성하였다.
+
+@postController 이하의 코드를 사용하면 req.userId 값이 없다고 나오는데 어디가 문제인지 모르겠다.(토큰은 만들어져있다.)
+```
+const asyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
+// require("dotenv").config();
+const jwtSecret = process.env.JWT_SECRET;
+const Post = require("../models/postModel");
+const User = require("../models/userModel");
+
+//@desc post page for write
+//@route GET /post/write
+const writePage = async(req, res) => {
+
+    const locals = {
+        title : "write",
+    }
+
+    const token = req.cookies.token;
+
+    if(!token){
+        return res.redirect("/signIn");
+    }
+    try{
+        const decoded = jwt.verify(token, jwtSecret);
+
+        req.userId = decoded.id;
+
+        const user = await User.findById(req.userId);
+
+        res.locals.user = user;
+
+        return res.render("post_write", { layout : "./loginUsers/loginLayout" });
+    } catch(error) {
+        return res.status(500).render("error", {error});
+    }
+}
+
+//@desc register post
+//@route POST /post/write
+const registerPost = asyncHandler(async (req, res) => {
+    const { category, title, body } = req.body;
+
+    let selectedCategory = ""
+
+    if (category === "general") {
+        selectedCategory = "자유";
+    } else if (category === "notice") {
+        selectedCategory = "공지";
+    } else {
+        return res.status(400).json({ message : "잘못된 접근입니다." });
+    }
+
+        const user = await User.findById(req.userId);
+
+        const newPost = await Post.create({
+            category : selectedCategory,
+            title,
+            author : user.userId,
+            body,
+        });
+
+        await newPost.save();
+        
+        res.redirect("/");
+});
+
+//토큰만들었을때 코드
+const token = jwt.sign({ id : user._id }, jwtSecret);
+
+res.cookie("token", token, { httpOnly : true });
+```
+
+4일차
+
+게시글 보기 템플릿 제작
+로그인 유무와 작성자가 동일한지 체크하고 수정하기 삭제하기 버튼을 활성화 비활성화 구분지음
+템플릿 파일 전체 스타일링
+로그아웃 기능 구현
+(홈 화면에) 글쓰기 버튼 추가
+수정화면 템플릿 제작
+수정기능 구현
+삭제기능 구현
+게시판 이동 기능 구현
+
+Q)
+1. <%= post.createdAt %> 로 작성일을 불러오려 하면 아래처럼 나오는데 2024 May 15처럼 출력시키고 싶은 경우 어떻게 해야할까
+Wed May 15 2024 00:58:40 GMT+0900 (대한민국 표준시)
+
+A)
+date-fns 라이브러리로 해당 기능을 사용할 수 있다.
+
+Q)
+2. 스키마에서 사용하는 Date.now 와 findIdAndUpdate()에 넘겨주는 Date.now()의 차이가 궁금하다.
+A)
+Date.now는 함수의 호출이 필요없이 속성처럼 동작하며 Date.now()는 함수의 호출이 일어날때마다 현재 시간을 반환한다.
+
+5일차
+
+게시글 상세페이지 요청시 조회수 상승 기능 구현
+페이징 기능 구현
+
+Q)
+1. 조회수 상승 기능 구현을 위한 코드
+A)
+detailPage 함수에서 const post = await Post.findByIdAndUpdate(postId, { $inc : { hits : 1 }}, { new : true });
+mongodb의 $inc 연산자를 사용해 필드값을 증가시킬수 있으며
+{new : true} 옵션을 사용해 업데이트가 반영된 값을 반환시키도록 한다.
+
+Q)
+2. 라우팅은 /general 경로가 되지만 /general?currentPage=<%= paging.currentPage%>로 경로를 요청해도 같은 페이지가 나올 수 있는게 왜그런가?
+그리고 <%= paging.currentPage %> 데이터를 컨트롤러 함수내에 가져다 써야하는데 어떻게 가져와야 하는가?
+A)
+경로가 동일한 페이지를 제공하는 이유는 서버에서 처리하는 방식때문이다.
+서버는 ? 이후의 쿼리 문자열을 URL의 일부분으로 해석하여 이를 라우트 핸들러에서 처리하기 때문이다.
+currentPage데이터는 req.query를 사용해 가져올 수 있다. req.query.currentPage
+
